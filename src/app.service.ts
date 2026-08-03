@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as Minio from 'minio';
 import { Readable } from 'stream';
 import fs from 'fs';
+import { GetPresignedUrlDTO } from './dto';
 
 export interface UploadObjectPayload {
   fileId: string;
@@ -87,6 +88,15 @@ export class AppService {
   }
 
   async getObjectStream(payload: GetObjectInfoPayload): Promise<Readable> {
-    return this.minioClient.getObject(this.bucketName, payload.objectKey);
+    return await this.minioClient.getObject(this.bucketName, payload.objectKey);
+  }
+
+  async getPresignedUrl(payload:GetPresignedUrlDTO):Promise<any>{
+    return await this.minioClient.presignedGetObject(this.bucketName,payload.objectName,payload.expires)
+  }
+  async presignedPutObject(payload:GetPresignedUrlDTO):Promise<any>{
+    console.log("in get-presigned-put-url service");
+
+    return await this.minioClient.presignedPutObject(this.bucketName,payload.objectName,payload.expires)
   }
 }
